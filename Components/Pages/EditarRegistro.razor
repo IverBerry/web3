@@ -1,0 +1,68 @@
+@page "/Registro/Editar/{id:int}"
+@inject NavigationManager NavMan
+@inject IJSRuntime JSx
+@using System.Text.Json
+@using web3.Models
+
+<h3>Editar Registro de Accidente</h3>
+
+<div class="card">
+    <div class="card-body">
+        <form>
+            <div class="mb-3">
+                <label for="fecha" class="form-label">Fecha</label>
+                <input type="date" id="fecha" @bind="reporte.Fecha" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea id="descripcion" @bind="reporte.Descripcion" class="form-control"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="costo" class="form-label">Costo Estimado</label>
+                <input type="number" id="costo" @bind="reporte.CostoEstimado" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="muertos" class="form-label">Muertos</label>
+                <input type="number" id="muertos" @bind="reporte.Muertos" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="heridos" class="form-label">Heridos</label>
+                <input type="number" id="heridos" @bind="reporte.Heridos" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="vehiculos" class="form-label">Vehículos Involucrados</label>
+                <input type="number" id="vehiculos" @bind="reporte.VehiculosInvolucrados" class="form-control" />
+            </div>
+
+            <button type="button" class="btn btn-primary" @onclick="GuardarCambios">Guardar</button>
+            <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Reporte reporte = new Reporte();
+
+    protected override async Task OnInitializedAsync() {
+        var reportesJson = await JSx.InvokeAsync<string>("localStorage.getItem", "reportes");
+        var reportes = string.IsNullOrEmpty(reportesJson) ? new List<Reporte>() : JsonSerializer.Deserialize<List<Reporte>>(reportesJson);
+        reporte = reportes.FirstOrDefault(r => r.Id == Id) ?? new Reporte();
+    }
+
+    private async Task GuardarCambios() {
+        var reportesJson = await JSx.InvokeAsync<string>("localStorage.getItem", "reportes");
+        var reportes = JsonSerializer.Deserialize<List<Reporte>>(reportesJson);
+        var reporteIndex = reportes.FindIndex(r => r.Id == Id);
+
+        if (reporteIndex != -1) {
+            reportes[reporteIndex] = reporte;
+            await JSx.InvokeVoidAsync("localStorage.setItem", "reportes", JsonSerializer.Serialize(reportes));
+            NavMan.NavigateTo("/Registro");
+        }
+    }
+
+    private void Cancelar() {
+        NavMan.NavigateTo("/Registro");
+    }
+}

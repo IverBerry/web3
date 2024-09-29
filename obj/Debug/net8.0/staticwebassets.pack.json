@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\pweb\\webviernes\\web3\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\web3.bundle.scp.css",
+      "PackagePath": "staticwebassets\\web3.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\pweb\\webviernes\\web3\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\pweb\\webviernes\\web3\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\pweb\\webviernes\\web3\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\pweb\\webviernes\\web3\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.web3.props",
+      "PackagePath": "build\\web3.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.web3.props",
+      "PackagePath": "buildMultiTargeting\\web3.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.web3.props",
+      "PackagePath": "buildTransitive\\web3.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.web3.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

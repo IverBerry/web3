@@ -1,0 +1,39 @@
+@page "/Registro/{Id}"
+@inject IJSRuntime JSx
+@inject NavigationManager NavMan
+@using web3.Models
+@using System.Text.Json
+@rendermode InteractiveServer
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+    private Reporte reporte = new Reporte();
+    private bool esNuevoRegistro => string.IsNullOrEmpty(Id); 
+    List<Reporte> reportes = new List<Reporte>();
+
+    protected override async Task OnInitializedAsync() {
+        var reportesJson = await JSx.InvokeAsync<string>("localStorage.getItem", "reportes");
+        reportes = string.IsNullOrEmpty(reportesJson) ? new List<Reporte>() : JsonSerializer.Deserialize<List<Reporte>>(reportesJson) ?? new List<Reporte>();
+
+        if (!esNuevoRegistro) {
+            reporte = reportes.FirstOrDefault(x => x.Id == Id) ?? new Reporte();
+        }
+    }
+
+    private async Task GuardarRegistro() {
+        if (esNuevoRegistro) {
+            reporte.Id = Guid.NewGuid().ToString();
+            reportes.Add(reporte);
+        } else {
+            var index = reportes.FindIndex(x => x.Id == reporte.Id);
+            if (index != -1) {
+                reportes[index] = reporte;
+            }
+        }
+
+        await JSx.InvokeVoidAsync("localStorage.setItem", "reportes", JsonSerializer.Serialize(reportes));
+        NavMan.NavigateTo("/Registro");
+    }
+}
+

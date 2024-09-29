@@ -1,0 +1,67 @@
+@page "/"
+@using System.Text.Json
+@inject IJSRuntime JSx
+@using web3.Models
+@rendermode InteractiveServer
+
+<PageTitle>Estadísticas de Accidentes</PageTitle>
+
+<h1>Estadísticas</h1>
+<hr>
+
+<div class="report-container">
+    <div class="dashboard-header">
+        <h4>Estadísticas de Accidentes</h4>
+    </div>
+    <div class="dashboard-body">
+        <div class="dashboard-item">
+            <span class="label">Total de Accidentes:</span> @reportes.Count
+        </div>
+        <div class="dashboard-item">
+            <span class="label">Total de Vehículos:</span> @reportes.Sum(r => r.VehiculosInvolucrados)
+        </div>
+        <div class="dashboard-item">
+            <span class="label">Total de Muertos:</span> @reportes.Sum(r => r.Muertos)
+        </div>
+        <div class="dashboard-item">
+            <span class="label">Total de Heridos:</span> @reportes.Sum(r => r.Heridos)
+        </div>
+        <div class="dashboard-item">
+            <span class="label">Costos Estimados Totales:</span> @reportes.Sum(r => r.CostoEstimado)
+        </div>
+    </div>
+</div>
+
+@code {
+    List<Reporte> reportes = new List<Reporte>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            var reportesJson = await JSx.InvokeAsync<string>("localStorage.getItem", "reportes");
+
+            if (!string.IsNullOrEmpty(reportesJson)) {
+                reportes = JsonSerializer.Deserialize<List<Reporte>>(reportesJson) ?? new List<Reporte>();
+                StateHasChanged();
+            }
+        }
+    }
+}
+
+<style>
+    .dashboard-header {
+    background-color: #005f73;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.dashboard-item {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #e0fbfc;
+    border-left: 5px solid #005f73;
+    border-radius: 5px;
+    font-size: 18px;
+}
+</style>

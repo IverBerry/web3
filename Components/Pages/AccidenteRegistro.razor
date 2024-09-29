@@ -1,0 +1,85 @@
+@page "/Registro"
+@inject IJSRuntime JSx
+@inject NavigationManager NavMan
+@using System.Text.Json
+@using web3.Models
+@rendermode InteractiveServer
+
+<h3>Registro de Accidentes</h3>
+<div class="text-end">
+    <button class="btn btn-success"  @onclick="NuevoRegistro">
+        <i class="bi bi-plus-circle"></i> Nuevo Registro
+    </button> 
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Costo Estimado</th>
+            <th>Muertos</th>
+            <th>Heridos</th>
+            <th>Vehículos Involucrados</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var datos in reportes) {
+            <tr>
+                <td>@datos.Fecha.ToString("dd/MM/yyyy")</td>
+                <td>@(datos.Descripcion.Length > 50 ? datos.Descripcion.Substring(0, 50) + "..." : datos.Descripcion)</td>
+                <td>@datos.CostoEstimado</td>
+                <td>@datos.Muertos</td>
+                <td>@datos.Heridos</td>
+                <td>@datos.VehiculosInvolucrados</td>
+                <td>
+                    <button @onclick="() => EditarFila(datos)" class="btn btn-primary btn-sm">Editar</button>
+                    <button @onclick="() => EliminarFila(datos)" class="btn btn-danger btn-sm">Eliminar</button>
+                    <button @onclick="() => ImprimirFila(datos)" class="btn btn-info btn-sm">Imprimir</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    List<Reporte> reportes = new List<Reporte>();
+
+    private void NuevoRegistro() {
+        NavMan.NavigateTo("Registro/Nuevo");
+    }
+
+    private void EditarFila(Reporte datos) {
+        NavMan.NavigateTo($"Registro/Editar/{datos.Id}");
+    }
+
+    private void ImprimirFila(Reporte datos) {
+        JSx.InvokeVoidAsync("window.open", $"Registro/Imprimir/{datos.Id}", "_blank");
+    }
+
+    private async Task EliminarFila(Reporte datos) {
+        var confirm = await JSx.InvokeAsync<bool>("confirm", "¿Está seguro de eliminar el registro?");
+        if (confirm) {
+            reportes.Remove(datos);
+            await JSx.InvokeVoidAsync("localStorage.setItem", "reportes", JsonSerializer.Serialize(reportes));
+            StateHasChanged();
+        }
+    }
+
+    private void EditarFila(Reporte datos) {
+    NavMan.NavigateTo($"Registro/Editar/{datos.Id}");
+}
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            var reportesJson = await JSx.InvokeAsync<string>("localStorage.getItem", "reportes");
+            if (!string.IsNullOrEmpty(reportesJson)) {
+                reportes = JsonSerializer.Deserialize<List<Reporte>>(reportesJson) ?? new List<Reporte>();
+                StateHasChanged();
+            }
+        }
+    }
+}
+
